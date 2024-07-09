@@ -13,12 +13,14 @@ def handler(event, context):
           #!/bin/bash
           yum update -y
           yum install -y python3
+          yum install -y pip
           yum install -y git
           cd /home/ec2-user/
           git clone https://github.com/djschlicht/force-backup-automator.git     
           cd force-backup-automator
+          python3 -m pip install setuptools
           python3 setup.py install
-          python3 force-backup-automator/downloadChromedriver.py
+          python3 util/downloadChromedriver.py
           python3 main.py
           shutdown -h now
           """
