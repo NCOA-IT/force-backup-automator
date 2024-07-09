@@ -5,10 +5,11 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from bs4 import BeautifulSoup
 from urllib.parse import unquote
+from botocore.exceptions import NoCredentialsError
 import re
 import time
-import requests 
-
+import requests
+import boto3
 
 class BackupController:
     def __init__(self,driver_location,org_link,login_url="https://login.salesforce.com/",is_headless=1,implicit_wait=30):
@@ -53,8 +54,36 @@ class BackupController:
                     # and set chunk_size parameter to None.
                     #if chunk: 
                     f.write(chunk)
-
-    def download_backups(self,download_location,backup_url,cookies=None,user_name=None,password=None):
+    
+    def upload_to_s3(file_name, bucket, org_name, date, object_name=None):
+        """
+        Upload a file to an S3 bucket.
+    
+        :param file_name: File to upload
+        :param bucket: Bucket to upload to
+        :param org_name: Salesforce Organization name
+        :param object_name: S3 object name. If not specified then file_name is used
+        :return: True if file was uploaded, else False
+        """
+        # If S3 object_name was not specified, use file_name
+        if object_name is None:
+            object_name = file_name
+    
+        # Upload the file
+        s3_client = boto3.client('s3')
+        try:
+            fp = f'{bucket}/{org_name}/{date}'
+            s3_client.upload_file(file_name, fp, object_name)
+        except FileNotFoundError:
+            print("The file was not found")
+            return False
+        except NoCredentialsError:
+            print("Credentials not available")
+            return False
+        return True        
+        
+    def download_backups(self,download_location,backup_url,bucket,date,
+                         cookies=None,user_name=None,password=None,org_name=None):
         
         if cookies is None:
             if (user_name is not None and password is not None):
@@ -79,7 +108,8 @@ class BackupController:
             file_url= self.org_link+file_path
             print('Downloading file '+file_url)
             self.download_file(file_url,cookies,file_name,download_location)
-
+            self.upload_to_s3(f'{download_location}/{file_name}', bucket, org_name, date)
+        
         self.driver.quit()
 
         
