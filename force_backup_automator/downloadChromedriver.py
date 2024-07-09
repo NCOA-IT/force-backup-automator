@@ -22,7 +22,7 @@ def download_chromedriver(version, os_type):
             file.write(chunk)
     
     with zipfile.ZipFile(zip_path, 'r') as zip_ref:
-        zip_ref.extractall(".")
+        zip_ref.extractall("../")
     
     os.remove(zip_path)
     print(f"ChromeDriver {version} downloaded and extracted successfully.")
