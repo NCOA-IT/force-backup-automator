@@ -36,11 +36,12 @@ def handler(event, context):
         UserData='''#!/bin/bash
         yum update -y
         yum install -y python3
-        aws s3 cp s3://my-bucket/my-package.tar.gz /home/ec2-user/  # change this line to a git clone of force-backup-automator
+        yum install -y git
         cd /home/ec2-user/
-        tar -xzvf my-package.tar.gz
-        python3 force-backup-automator/setup.py install
-        python3 downloadChromedriver.py
+        git clone https://github.com/djschlicht/force-backup-automator.git     
+        cd force-backup-automator
+        python3 setup.py install
+        python3 force-backup-automator/downloadChromedriver.py
         python3 main.py
         shutdown -h now
         '''
