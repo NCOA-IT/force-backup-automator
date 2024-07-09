@@ -111,7 +111,47 @@ class BackupController:
             self.upload_to_s3(f'{download_location}/{file_name}', bucket, org_name, date)
         
         self.driver.quit()
-
+                             
+    def get_aws_credentials(secret_name, region_name):
+        """
+        Retrieve AWS credentials from AWS Secrets Manager.
+    
+        :param secret_name: Name of the secret in AWS Secrets Manager
+        :param region_name: AWS region where the secret is stored
+        :return: Dictionary containing AWS credentials
+        """
+        # Create a Secrets Manager client
+        session = boto3.session.Session()
+        client = session.client(
+            service_name='secretsmanager',
+            region_name=region_name
+        )
+    
+        try:
+            # Retrieve the secret value
+            get_secret_value_response = client.get_secret_value(SecretId=secret_name)
+        except ClientError as e:
+            # Handle specific exceptions
+            if e.response['Error']['Code'] == 'DecryptionFailureException':
+                raise e
+            elif e.response['Error']['Code'] == 'InternalServiceErrorException':
+                raise e
+            elif e.response['Error']['Code'] == 'InvalidParameterException':
+                raise e
+            elif e.response['Error']['Code'] == 'InvalidRequestException':
+                raise e
+            elif e.response['Error']['Code'] == 'ResourceNotFoundException':
+                raise e
+        else:
+            # Decrypts secret using the associated KMS key
+            if 'SecretString' in get_secret_value_response:
+                secret = get_secret_value_response['SecretString']
+            else:
+                secret = base64.b64decode(get_secret_value_response['SecretBinary'])
+    
+        # Parse the secret and return it as a dictionary
+        credentials = json.loads(secret)
+        return credentials
         
     
     
