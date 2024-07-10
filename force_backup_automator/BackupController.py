@@ -1,15 +1,17 @@
-from selenium import webdriver
-from selenium.common.exceptions import TimeoutException
-from selenium.webdriver.support.ui import WebDriverWait
+from selenium import webdriver 
+from selenium.common.exceptions import TimeoutException 
+from selenium.webdriver.support.ui import WebDriverWait 
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from bs4 import BeautifulSoup
 from urllib.parse import unquote
-from botocore.exceptions import NoCredentialsError
+from botocore.exceptions import NoCredentialsError, ClientError
 import re
 import time
 import requests
 import boto3
+import json
+import base64
 
 class BackupController:
     def __init__(self,driver_location,org_link,login_url="https://login.salesforce.com/",is_headless=1,implicit_wait=30):

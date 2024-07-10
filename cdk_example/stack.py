@@ -1,4 +1,4 @@
-from aws_cdk import (
+from aws_cdk import ( # type: ignore
     aws_ec2 as ec2,
     aws_iam as iam,
     aws_lambda as _lambda,
