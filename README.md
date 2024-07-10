@@ -1,4 +1,6 @@
 # force-backup-automator
+## Change in this fork
+This fork modifies the original to work in AWS with the data exports being landed in an S3 bucket.
 
 ## What is it?
 
