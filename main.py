@@ -20,5 +20,7 @@ backup_instance.download_backups(download_location='TARGET LOCATION',
                                  date=datetime.now(),
                                  org_name=creds['org_name'])
 
+# send the runtime and status after dl to ensure topic?
+
 # use subprocess to issue shutdown command
 subprocess.run("shutdown")
