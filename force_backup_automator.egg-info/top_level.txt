@@ -1,1 +1,0 @@
-force_backup_automator

@@ -20,7 +20,7 @@ setup(name='force_backup_automator',
           'selenium',
           'beautifulsoup4',
           'urllib3',
-          'boto3',
+          'boto3'
       ],
       python_requires='>=3.0',
       zip_safe=False)
